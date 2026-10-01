@@ -1,0 +1,16 @@
+# Files in this repository that are NOT part of the public website (Workers deployment only)
+/.assetsignore
+/wrangler.jsonc
+/worker.js
+/functions
+/tests
+/tools
+/docs
+/README.md
+/package.json
+/package-lock.json
+/node_modules
+/.git
+/.github
+/.gitignore
+/assets/img/README.md
