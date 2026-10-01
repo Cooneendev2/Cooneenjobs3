@@ -2,7 +2,7 @@
 // Cloudflare Pages does not use this file (it ignores a Wrangler file that has no pages_build_output_dir).
 {
   // Must match the Worker's name in the Cloudflare dashboard (it gives <name>.<your-subdomain>.workers.dev)
-  "name": "cooneenjobs1",
+  "name": "cooneenjobs3",
   "main": "worker.js",
   "compatibility_date": "2025-09-01",
   "assets": {
