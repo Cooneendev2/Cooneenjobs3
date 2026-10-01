@@ -1,0 +1,13 @@
+// Used only when this project is deployed as a Cloudflare Worker (the *.workers.dev kind, "npx wrangler deploy").
+// Cloudflare Pages does not use this file (it ignores a Wrangler file that has no pages_build_output_dir).
+{
+  // Must match the Worker's name in the Cloudflare dashboard (it gives <name>.<your-subdomain>.workers.dev)
+  "name": "cooneenjobs1",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    // The website files are at the repository root; .assetsignore keeps the non-website files out
+    "directory": "./",
+    "binding": "ASSETS"
+  }
+}

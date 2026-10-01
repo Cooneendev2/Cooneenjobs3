@@ -1,0 +1,50 @@
+/* Display builder page. Plain, high-contrast, uses the same colour tokens as the display (light theme). */
+:root { --font: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--bg-1); }
+body { margin: 0; font-family: var(--font); color: var(--on-bg); background: var(--bg-1); font-size: 16px; line-height: 1.45; }
+.top { max-width: 1280px; margin: 0 auto; padding: 28px 24px 8px; }
+.top h1 { margin: 0 0 4px; font-size: 32px; font-weight: 800; letter-spacing: -0.01em; }
+.top p { margin: 0; color: var(--on-bg-2); font-weight: 600; max-width: 62em; }
+.layout { max-width: 1280px; margin: 0 auto; padding: 16px 24px 48px; display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.panel, .box { background: var(--surface); color: var(--ink); border-radius: 14px; box-shadow: var(--shadow); }
+.panel { padding: 8px 20px 20px; }
+.result { position: sticky; top: 16px; display: grid; gap: 16px; }
+.box { padding: 18px 20px; }
+.group { border: 0; margin: 0; padding: 14px 0 6px; min-width: 0; border-bottom: 2px dashed var(--line); }
+.group:last-child { border-bottom: 0; }
+.group legend { padding: 0; font-weight: 800; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); }
+.field { margin: 12px 0; }
+.field label { display: block; font-weight: 800; margin-bottom: 4px; }
+.field input, .field select, .out-row input, .size-row select {
+  width: 100%; font: inherit; font-weight: 600; color: var(--ink); background: #fff; border: 2px solid var(--ink-2); border-radius: 8px; padding: 8px 10px; min-height: 42px;
+}
+.help { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); font-weight: 600; }
+.is-inactive { opacity: 0.45; }
+.is-inactive:focus-within { opacity: 1; }
+input:focus, select:focus, button:focus, a.btn:focus { outline: 4px solid var(--focus); outline-offset: 2px; }
+input:focus:not(:focus-visible), select:focus:not(:focus-visible), button:focus:not(:focus-visible), a.btn:focus:not(:focus-visible) { outline: none; }
+input:focus-visible, select:focus-visible, button:focus-visible, a.btn:focus-visible { outline: 4px solid var(--focus); outline-offset: 2px; }
+.btn {
+  appearance: none; display: inline-flex; align-items: center; justify-content: center; font: inherit; font-weight: 800; cursor: pointer; text-decoration: none;
+  padding: 8px 16px; min-height: 42px; border-radius: 8px; border: 2px solid var(--ink); background: var(--ink); color: var(--surface); white-space: nowrap;
+}
+.btn:hover { opacity: 0.9; }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--ink-2); }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 8px; }
+.presets .btn { white-space: normal; text-align: left; min-height: 38px; font-size: 14px; }
+.out-label, .size-row label { display: block; font-weight: 800; margin-bottom: 6px; }
+.out-row { display: flex; gap: 8px; }
+.out-row input { flex: 1 1 auto; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; }
+.copied { margin: 8px 0 0; min-height: 1.4em; color: var(--accent-ink); font-weight: 800; }
+.issues { margin: 6px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--warn); color: var(--on-warn); font-weight: 700; font-size: 14px; }
+.size-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.size-row label { margin: 0; white-space: nowrap; }
+.preview-wrap { position: relative; width: 100%; overflow: hidden; border-radius: 8px; background: #0b1f33; border: 2px solid var(--ink-2); }
+.preview-wrap iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: #0b1f33; }
+.hint { margin: 10px 0 0; font-size: 14px; color: var(--ink-2); font-weight: 600; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .result { position: static; order: -1; }
+}

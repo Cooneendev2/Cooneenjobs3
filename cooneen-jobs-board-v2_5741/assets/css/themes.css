@@ -1,0 +1,114 @@
+/* Themes: every theme sets the same set of colour tokens. Nothing else in the CSS contains a colour.
+   Selected with ?theme=cooneen | dark | light | highcontrast | portal
+   (set on <html data-theme="..."> by early.js / main.js).
+
+   Cooneen palette (from the Cooneen Group website and the apps.cooneen.com staff portal):
+     orange #E87722   blue #14456E   charcoal #1A1A1A   warm greys   red #DC2626 for urgency
+   The default theme is charcoal with the orange heading band; the heading band is always the Cooneen colour.
+
+   Tokens
+     bg-1 bg-2        stage background gradient           twill   faint diagonal cloth texture
+     on-bg  on-bg-2   text on the background / muted      rule    dashed "stitch" lines on the background
+     panel            the duo screen's panels (text colours on it are on-bg / on-bg-2)
+     surface ink ink-2 line stitch    card colours (text, muted text, dashed divider, inner stitch)
+     accent accent-ink on-accent       Cooneen accent (text/fill on the background, text on a card, text on a fill)
+     gold on-gold     Featured badge
+     warn on-warn warn-ink warn-text   Closing soon (fill, text on fill, text on surface, text on background)
+     new on-new       New badge
+     hdr-bg hdr-ink hdr-edge           the heading band (logo + INTERNAL VACANCIES): fill, text, bottom line
+     plate-dark plate-dark-ink plate-light plate-light-ink    what the logo sits on (?logobg=), and the wordmark colour on it
+     qr-edge          colour of the frame round every QR code (the code itself is always black on white)
+     seg-bg           empty paging segments               focus   keyboard focus ring on the background
+     focus-s          focus ring on a white card / list row
+     ticker-*         ticker strip colours (ticker-warn = warning icon)   card-border-w  extra card outline (high contrast only)
+   tests/contrast.mjs checks the contrast of every pair of these tokens for every theme. */
+
+:root,
+:root[data-theme="cooneen"] {
+  --bg-1: #1a1a1a; --bg-2: #2b2926; --twill: rgba(255, 255, 255, 0.035);
+  --on-bg: #ffffff; --on-bg-2: #d9d4cd; --rule: rgba(255, 255, 255, 0.34); --seg-bg: rgba(255, 255, 255, 0.18);
+  --panel: #333030;
+  --accent: #f08a35; --accent-ink: #b5560a; --on-accent: #1a1a1a;
+  --gold: #e87722; --on-gold: #1a1a1a;
+  --warn: #dc2626; --on-warn: #ffffff; --warn-ink: #b91c1c; --warn-text: #ff8f84;
+  --new: #6db4ee; --on-new: #0b2a47;
+  --surface: #ffffff; --ink: #1a1a1a; --ink-2: #4f4b46; --line: rgba(26, 26, 26, 0.3); --stitch: rgba(232, 119, 34, 0.85);
+  --shadow: 0 calc(var(--d, 1px) * 10) calc(var(--d, 1px) * 30) rgba(0, 0, 0, 0.45);
+  --hdr-bg: #e87722; --hdr-ink: #1a1a1a; --hdr-edge: #b85a0c;
+  --plate-dark: #1a1a1a; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
+  --qr-edge: #e87722;
+  --card-border-w: 0; --focus: #ffd27a; --focus-s: #14456e;
+  --ticker-bg: #111111; --ticker-ink: #ffffff; --ticker-label-bg: #e87722; --ticker-label-ink: #1a1a1a; --ticker-line: #e87722; --ticker-warn: #ffb36b;
+}
+
+/* All dark: a near-black screen with a dark heading band and orange lettering. */
+:root[data-theme="dark"] {
+  --bg-1: #0e0e0e; --bg-2: #1b1a19; --twill: rgba(255, 255, 255, 0.03);
+  --on-bg: #f5f3f0; --on-bg-2: #bdb7af; --rule: rgba(255, 255, 255, 0.3); --seg-bg: rgba(255, 255, 255, 0.18);
+  --panel: #262423;
+  --accent: #f58f3e; --accent-ink: #ffa45c; --on-accent: #1a1a1a;
+  --gold: #f58f3e; --on-gold: #1a1204;
+  --warn: #f05252; --on-warn: #1a0000; --warn-ink: #ff8f84; --warn-text: #ff8f84;
+  --new: #6db4ee; --on-new: #0b2a47;
+  --surface: #262423; --ink: #f5f3f0; --ink-2: #c5bfb7; --line: rgba(255, 255, 255, 0.24); --stitch: rgba(245, 143, 62, 0.6);
+  --shadow: 0 calc(var(--d, 1px) * 10) calc(var(--d, 1px) * 30) rgba(0, 0, 0, 0.55);
+  --hdr-bg: #000000; --hdr-ink: #f58f3e; --hdr-edge: #e87722;
+  --plate-dark: #1f1e1d; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
+  --qr-edge: #f58f3e;
+  --card-border-w: 0; --focus: #ffd27a; --focus-s: #ffd27a;
+  --ticker-bg: #000000; --ticker-ink: #f5f3f0; --ticker-label-bg: #f58f3e; --ticker-label-ink: #1a1a1a; --ticker-line: #f58f3e; --ticker-warn: #ff8f84;
+}
+
+/* Light: warm paper background, the same orange band. */
+:root[data-theme="light"] {
+  --bg-1: #f4f2ef; --bg-2: #e8e4de; --twill: rgba(26, 26, 26, 0.035);
+  --on-bg: #1a1a1a; --on-bg-2: #4a463f; --rule: rgba(26, 26, 26, 0.3); --seg-bg: rgba(26, 26, 26, 0.16);
+  --panel: #ffffff;
+  --accent: #a64a07; --accent-ink: #a64a07; --on-accent: #ffffff;
+  --gold: #e87722; --on-gold: #1a1a1a;
+  --warn: #dc2626; --on-warn: #ffffff; --warn-ink: #b91c1c; --warn-text: #b91c1c;
+  --new: #14456e; --on-new: #ffffff;
+  --surface: #ffffff; --ink: #1a1a1a; --ink-2: #4a463f; --line: rgba(26, 26, 26, 0.25); --stitch: rgba(232, 119, 34, 0.8);
+  --shadow: 0 calc(var(--d, 1px) * 8) calc(var(--d, 1px) * 24) rgba(26, 26, 26, 0.16);
+  --hdr-bg: #e87722; --hdr-ink: #1a1a1a; --hdr-edge: #b85a0c;
+  --plate-dark: #1a1a1a; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
+  --qr-edge: #b85a0c;
+  --card-border-w: 0; --focus: #14456e; --focus-s: #14456e;
+  --ticker-bg: #ffffff; --ticker-ink: #1a1a1a; --ticker-label-bg: #e87722; --ticker-label-ink: #1a1a1a; --ticker-line: #e87722; --ticker-warn: #b91c1c;
+}
+
+/* Maximum contrast: black and white with signal yellow. */
+:root[data-theme="highcontrast"] {
+  --bg-1: #000000; --bg-2: #000000; --twill: transparent;
+  --on-bg: #ffffff; --on-bg-2: #ffffff; --rule: #ffffff; --seg-bg: rgba(255, 255, 255, 0.35);
+  --panel: #000000;
+  --accent: #ffe600; --accent-ink: #ffe600; --on-accent: #000000;
+  --gold: #ffe600; --on-gold: #000000;
+  --warn: #ff9f1c; --on-warn: #000000; --warn-ink: #ffb13b; --warn-text: #ffb13b;
+  --new: #00e5ff; --on-new: #000000;
+  --surface: #000000; --ink: #ffffff; --ink-2: #ffffff; --line: #ffffff; --stitch: #ffffff;
+  --shadow: 0 0 0 rgba(0, 0, 0, 0);
+  --hdr-bg: #ffe600; --hdr-ink: #000000; --hdr-edge: #ffffff;
+  --plate-dark: #000000; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #000000;
+  --qr-edge: #ffe600;
+  --card-border-w: 3; --focus: #00e5ff; --focus-s: #00e5ff;
+  --ticker-bg: #000000; --ticker-ink: #ffffff; --ticker-label-bg: #ffe600; --ticker-label-ink: #000000; --ticker-line: #ffffff; --ticker-warn: #ffb13b;
+}
+
+/* Matches the colours of the apps.cooneen.com staff portal (orange, blue, charcoal on light grey). */
+:root[data-theme="portal"] {
+  --bg-1: #f0f0f0; --bg-2: #e6e6e6; --twill: rgba(20, 69, 110, 0.04);
+  --on-bg: #1a1a1a; --on-bg-2: #555555; --rule: rgba(20, 69, 110, 0.35); --seg-bg: rgba(20, 69, 110, 0.15);
+  --panel: #ffffff;
+  --accent: #a04a0a; --accent-ink: #a04a0a; --on-accent: #ffffff;
+  --gold: #14456e; --on-gold: #ffffff;
+  --warn: #dc2626; --on-warn: #ffffff; --warn-ink: #b91c1c; --warn-text: #b91c1c;
+  --new: #e87722; --on-new: #1a1a1a;
+  --surface: #ffffff; --ink: #1a1a1a; --ink-2: #555555; --line: rgba(0, 0, 0, 0.22); --stitch: rgba(232, 119, 34, 0.7);
+  --shadow: 0 calc(var(--d, 1px) * 8) calc(var(--d, 1px) * 24) rgba(0, 0, 0, 0.14);
+  --hdr-bg: #e87722; --hdr-ink: #1a1a1a; --hdr-edge: #14456e;
+  --plate-dark: #14456e; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
+  --qr-edge: #14456e;
+  --card-border-w: 0; --focus: #14456e; --focus-s: #14456e;
+  --ticker-bg: #1e1e1e; --ticker-ink: #ffffff; --ticker-label-bg: #e87722; --ticker-label-ink: #1a1a1a; --ticker-line: #e87722; --ticker-warn: #ff9f4d;
+}

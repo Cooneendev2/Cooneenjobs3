@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="robots" content="noindex, nofollow">
+<title>Display builder – Cooneen internal vacancies</title>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/themes.css">
+<link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+<header class="top">
+  <h1>Display builder</h1>
+  <p>Choose how the vacancy display should look, copy the address, and paste it into Yodeck, SharePoint, Teams or the screen's browser. Nothing is saved: the address <em>is</em> the setting.</p>
+</header>
+<main class="layout">
+  <form class="panel" id="form" autocomplete="off" aria-label="Display settings"></form>
+  <section class="result" aria-label="Result">
+    <div class="box">
+      <label for="out" class="out-label">Display address</label>
+      <div class="out-row">
+        <input id="out" type="text" readonly spellcheck="false">
+        <button type="button" id="copy" class="btn">Copy</button>
+        <a id="open" class="btn" href="./" target="_blank" rel="noopener noreferrer">Open</a>
+      </div>
+      <p id="copied" class="copied" role="status" aria-live="polite"></p>
+      <p id="issues" class="issues" hidden></p>
+    </div>
+    <div class="box">
+      <div class="size-row">
+        <label for="size">Preview size</label>
+        <select id="size"></select>
+      </div>
+      <div class="preview-wrap" id="wrap"><iframe id="preview" title="Preview of the display"></iframe></div>
+      <p class="hint">The preview uses the live vacancy data. A screen's real size and shape always decide the final layout.</p>
+    </div>
+  </section>
+</main>
+<script type="module" src="assets/js/admin.js"></script>
+<noscript><p class="top">This page needs JavaScript. The display itself accepts settings in the address, for example <code>/?mode=hero&amp;theme=dark</code>.</p></noscript>
+</body>
+</html>
