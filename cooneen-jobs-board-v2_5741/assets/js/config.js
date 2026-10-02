@@ -3,7 +3,7 @@
    Names are matched case-insensitively (?showLocation=0 and ?showlocation=0 are the same).
    Anything unknown or invalid is ignored (the default is used) and listed in ?diag=1. */
 
-export const VERSION = '2.1.0';
+export const VERSION = '2.1.1';
 
 export const MODES = ['wall', 'carousel', 'hero', 'duo', 'widget', 'ticker', 'kiosk'];
 export const THEMES = ['cooneen', 'dark', 'light', 'highcontrast', 'portal'];
