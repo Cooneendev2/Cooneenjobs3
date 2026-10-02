@@ -93,8 +93,9 @@ The feature slide (carousel, hero) and each duo column fit the same way, in this
 overview (shown whole, shrunk down to 55 %, and only then cut at a line end with an ellipsis), then the facts and the QR. The QR code
 is hidden only when it would no longer be scannable (below 2.4 device pixels per module).
 
-The heading band is outside this fitting: it has a fixed height, `INTERNAL VACANCIES` is sized to it, and it is shrunk (never cut) only
-when a very large `fontscale` or a very narrow screen would not leave room beside the logo.
+The heading band is outside this fitting: it has a fixed height, `INTERNAL VACANCIES` is sized to it, and it is shrunk (down to 35 %) only
+when a very large `fontscale`, a very narrow screen or a long wording in another language would not leave room beside the logo. A custom `?title=`
+of about 70 characters does not fit even at 35 % and is cut with "…": keep a custom heading short (about 25 characters is as long as it stays large).
 
 Refitting is repeated once the web font arrives (`document.fonts` `loadingdone`), because Nunito is slightly wider than the fallback.
 
