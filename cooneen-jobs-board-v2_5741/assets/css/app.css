@@ -82,6 +82,13 @@ html.kiosk, html.kiosk * { cursor: none !important; }
 }
 .plate-light { background: var(--plate-light); color: var(--plate-light-ink); }
 .plate-none { background: transparent; color: inherit; padding: 0; }
+/* On the dark heading bands (cooneen, dark, light) the logo sits straight on the band: no box behind it, transparent all
+   round. Portal (orange band) and high contrast keep their plate, and so does the ticker on the light theme (white strip). */
+:root[data-theme="cooneen"] .hdr .plate-dark, :root[data-theme="dark"] .hdr .plate-dark, :root[data-theme="light"] .hdr .plate-dark,
+:root[data-theme="cooneen"] .w-head .plate-dark, :root[data-theme="dark"] .w-head .plate-dark, :root[data-theme="light"] .w-head .plate-dark,
+:root[data-theme="cooneen"] .ticker .plate-dark, :root[data-theme="dark"] .ticker .plate-dark { background: transparent; }
+:root[data-theme="cooneen"] .hdr .plate-dark, :root[data-theme="dark"] .hdr .plate-dark, :root[data-theme="light"] .hdr .plate-dark,
+:root[data-theme="cooneen"] .w-head .plate-dark, :root[data-theme="dark"] .w-head .plate-dark, :root[data-theme="light"] .w-head .plate-dark { padding-left: 0; }
 .plate-logo { display: block; height: calc(var(--d) * var(--ph) * 0.68); width: auto; max-width: calc(var(--d) * var(--ph) * 4.4); }
 .plate-word { font-weight: 800; letter-spacing: 0.02em; white-space: nowrap; font-size: calc(var(--d) * var(--ph) * 0.36); }
 
