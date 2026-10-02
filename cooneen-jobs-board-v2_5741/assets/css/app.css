@@ -99,13 +99,17 @@ html.kiosk .foot .status { position: absolute; right: calc(var(--d) * 56); botto
 html.kiosk .foot .pager { max-width: 46%; }
 .pager { display: flex; flex: 1 1 auto; gap: calc(var(--d) * 8); min-width: 0; max-width: calc(var(--d) * 900); }
 .pager i {
-  display: block; position: relative; flex: 1 1 0; max-width: calc(var(--d) * 160); height: calc(var(--d) * 8);
+  display: block; position: relative; flex: 1 1 0; max-width: calc(var(--d) * 300); height: calc(var(--d) * 8);
   border-radius: 999px; background: var(--seg-bg); overflow: hidden;
 }
-.pager i b { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--accent); }
-.pager i.is-done b { width: 100%; }
-.pager i.is-active b { animation: fill var(--rot, 20s) linear forwards; }
-@keyframes fill { from { width: 0; } to { width: 100%; } }
+/* The fill is a transform, not a width: the browser moves it in sub-pixel steps, so it glides. buildPager() (components.js)
+   animates the current segment and keeps it in step with the rotation timer; done segments are simply full. */
+.pager i b {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--accent);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+.pager i.is-done b { transform: scaleX(1); }
+.pager i.is-active b { will-change: transform; }
 .counter { margin: 0; line-height: 1; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--on-bg-2); font-size: calc(var(--d) * var(--fs) * 26); }
 .status {
   margin: 0 0 0 auto; display: flex; align-items: center; gap: 0.5em; color: var(--on-bg-2); font-weight: 600;
@@ -449,7 +453,7 @@ a.w-row:focus-visible { outline: calc(var(--d) * 4) solid var(--focus-s); outlin
 }
 
 /* ---------- motion ---------- */
-.is-paused .pager i.is-active b, .is-paused .ticker-track { animation-play-state: paused; }
+.is-paused .ticker-track { animation-play-state: paused; }
 .reduced-motion *, .reduced-motion *::before, .reduced-motion *::after { animation: none !important; transition: none !important; }
 
 /* ---------- diagnostics panel (?diag=1) ---------- */
