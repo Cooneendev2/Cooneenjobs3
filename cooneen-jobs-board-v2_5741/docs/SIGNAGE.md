@@ -27,8 +27,8 @@ read the role overview; the wall and ticker keep their own faster defaults.
 | Bad data from the server | Rejected by validation; the screen keeps what it has. |
 | Data older than 26 h | Shows "this list may be out of date (last updated …)". |
 | A bug or browser fault | An error watchdog counts page errors; 5 in 10 minutes triggers one reload (only if the site answers, at most once every 30 minutes, so it cannot loop). |
-| Hidden or sleeping screen | When the page is hidden, rotation and animation pause and resume with the time that was left; on return it checks the data immediately if one is due. |
-| Heavy animation | Very little moves: the page cross-fade, the paging progress bar, the ticker, and a gentle pulse on the "loading" panel. With "reduce motion" on (or `motion=reduced`) the fades and the bar fill are removed and the ticker shows one vacancy at a time. |
+| Hidden or sleeping screen | When the page is hidden, rotation and the progress bar pause and resume with the time that was left; on return it checks the data immediately if one is due. The progress bar is drawn from the rotation timer itself (not from a separate animation clock), is re-checked every 30 s, and a missed "page is visible again" event is caught by the same check, so the bar and the screen change cannot drift apart. |
+| Heavy animation | Very little moves: the page cross-fade, the paging progress bar (a sub-pixel transform on the graphics card, so it glides), the ticker, and a gentle pulse on the "loading" panel. With "reduce motion" on (or `motion=reduced`) the fades and the bar fill are removed and the ticker shows one vacancy at a time. |
 | Power cycles | Nothing is stored on the server and the address *is* the configuration, so a restarted screen comes back exactly as before. |
 
 `?diag=1` adds a panel with the settings the screen understood (and anything it ignored), the data health, last and next check,
