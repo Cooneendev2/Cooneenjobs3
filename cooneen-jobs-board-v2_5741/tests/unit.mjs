@@ -10,6 +10,7 @@ import { computeWallLayout, sliceIntoPages } from '../assets/js/layout.js';
 import { parsePayload, safeUrl, CAREERS_HOST } from '../assets/js/store.js';
 import { encodeQR, qrToPath } from '../assets/js/qr.js';
 import { nextLondonTime } from '../assets/js/runtime.js';
+import { createRotator } from '../assets/js/rotator.js';
 import { updated as paramDocUpdated } from '../tools/params-doc.mjs';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -394,6 +395,82 @@ test('Workers deployment files: wrangler.jsonc points at worker.js and the asset
   ['index.html', 'admin.html', 'assets'].forEach((p) => assert.ok(existsSync(join(ROOT, p)) && !ignored.includes('/' + p), p + ' must stay public'));
   const worker = readFileSync(join(ROOT, 'worker.js'), 'utf8');
   assert.ok(/pathname === '\/api\/jobs'/.test(worker), 'only the exact path /api/jobs may reach the handler');
+});
+
+/* ------------------------------------------------------------------ rotation clock (drives the progress bar) */
+function fakeClock() {
+  /* A hand-wound clock: Date.now() and window.setTimeout follow `now`, which the test advances. */
+  let now = 1_000_000; let next = 1; const timers = new Map();
+  const realNow = Date.now;
+  Date.now = () => now;
+  globalThis.window = {
+    setTimeout(fn, ms) { const id = next++; timers.set(id, { at: now + ms, fn }); return id; },
+    clearTimeout(id) { timers.delete(id); }
+  };
+  return {
+    advance(ms) {
+      const end = now + ms;
+      for (;;) {
+        let id = 0; let t = null;
+        timers.forEach((v, k) => { if (v.at <= end && (!t || v.at < t.at)) { t = v; id = k; } });
+        if (!t) break;
+        timers.delete(id); now = t.at; t.fn();
+      }
+      now = end;
+    },
+    restore() { Date.now = realNow; delete globalThis.window; }
+  };
+}
+test('rotator: state() counts up to the interval, the tick re-arms first, and the progress is back at zero when the new slide is built', () => {
+  const clock = fakeClock();
+  try {
+    const seen = [];
+    let r = null;
+    r = createRotator(() => seen.push(r.state().elapsed));
+    r.start(40000);
+    assert.deepEqual(r.state(), { interval: 40000, elapsed: 0, held: false });
+    clock.advance(10000);
+    assert.equal(r.state().elapsed, 10000);
+    clock.advance(30000);                      /* the tick fires at exactly 40 s ... */
+    assert.deepEqual(seen, [0]);               /* ... and sees a fresh countdown, not a finished one */
+    clock.advance(40000);
+    assert.equal(seen.length, 2);
+  } finally { clock.restore(); }
+});
+test('rotator: a hold freezes the countdown and the release resumes with the time that was left (the bar stays in step)', () => {
+  const clock = fakeClock();
+  try {
+    let ticks = 0; const changes = [];
+    let r = null;
+    r = createRotator(() => { ticks += 1; }, () => changes.push(JSON.stringify(r.state())));
+    r.start(40000);
+    clock.advance(15000);
+    r.hold('hidden');
+    assert.deepEqual(r.state(), { interval: 40000, elapsed: 15000, held: true });
+    clock.advance(600000);                     /* ten minutes hidden: nothing fires, nothing moves */
+    assert.equal(ticks, 0);
+    assert.equal(r.state().elapsed, 15000);
+    r.hold('user'); r.release('hidden');       /* still held by the user */
+    assert.equal(r.state().held, true);
+    r.release('user');
+    assert.deepEqual(r.state(), { interval: 40000, elapsed: 15000, held: false });
+    clock.advance(24999); assert.equal(ticks, 0);
+    clock.advance(1); assert.equal(ticks, 1);  /* 25 s left when it was held, 25 s after it resumed */
+    assert.ok(changes.length >= 5, 'onChange is called on start, hold and release');
+  } finally { clock.restore(); }
+});
+test('rotator: restart() gives a full countdown; stop() reports nothing rotating', () => {
+  const clock = fakeClock();
+  try {
+    let ticks = 0;
+    const r = createRotator(() => { ticks += 1; });
+    r.start(10000); clock.advance(7000); r.restart();
+    assert.equal(r.state().elapsed, 0);
+    clock.advance(9999); assert.equal(ticks, 0);
+    clock.advance(1); assert.equal(ticks, 1);
+    r.stop(); assert.equal(r.state().interval, 0);
+    clock.advance(100000); assert.equal(ticks, 1);
+  } finally { clock.restore(); }
 });
 
 /* ------------------------------------------------------------------ */
