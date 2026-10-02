@@ -49,13 +49,21 @@ export function mountSlideshow(ctx, spec) {
   let current = null;
   let paused = false;
   let controls = null;
+  let bar = null;                       /* the progress bar: follows the rotator's clock */
   const timers = new Set();
 
   function later(fn, ms) {
     const id = window.setTimeout(() => { timers.delete(id); fn(); }, ms);
     timers.add(id);
   }
-  const rotator = createRotator(() => go(1, false));
+  const rotator = createRotator(() => go(1, false), syncBar);
+
+  function syncBar() { if (bar) bar.sync(rotator.state()); }
+  /* Start the bar for screen i (empty, filling) at the same moment the countdown for it starts. */
+  function startBar(i) {
+    bar = buildPager(pager, groups.length, i, cfg.rotation, !ctx.reducedMotion);
+    syncBar();
+  }
 
   if (full && cfg.controls) {
     controls = createControls(ctx, { prev: () => go(-1, true), next: () => go(1, true), toggle: () => togglePause() });
@@ -68,6 +76,7 @@ export function mountSlideshow(ctx, spec) {
     rotator.stop();
     groups = [];
     current = null;
+    bar = null;
     clear(slideHost);
     clear(stateHost);
     pager.hidden = true;
@@ -77,11 +86,10 @@ export function mountSlideshow(ctx, spec) {
     stateHost.appendChild(createStatePanel(kind, ctx));
   }
 
-  function build(i, keepPager) {
+  function build(i) {
     const group = groups[i];
     if (!group) return;               /* the data may have changed during the fade */
     clear(slideHost);
-    if (!keepPager) buildPager(pager, groups.length, i, cfg.rotation);
     counter.hidden = groups.length <= 1;
     counter.textContent = ctx.i18n.t('slideOf', { n: i + 1, total: groups.length });
     current = spec.create(group, ctx);
@@ -89,25 +97,25 @@ export function mountSlideshow(ctx, spec) {
     spec.fit(current);
   }
 
+  /* The progress bar moves on at once (the old bar is full at that moment); the screen itself fades over 0.4 s. */
   function render(i, animate, keepPager) {
     if (!groups[i]) return;
+    if (!keepPager) startBar(i);
     if (animate && !ctx.reducedMotion) {
       slideHost.classList.add('is-out');
-      later(() => { build(i, false); slideHost.classList.remove('is-out'); }, 380);
+      later(() => { build(i); slideHost.classList.remove('is-out'); }, 380);
     } else {
       slideHost.classList.remove('is-out');
-      build(i, keepPager);
+      build(i);
     }
   }
 
   function go(delta, manual) {
     if (groups.length < 2) return;
     index = (index + delta + groups.length) % groups.length;
+    if (manual) rotator.restart();      /* a full countdown from now, before the bar is started */
     render(index, true, false);
-    if (manual) {
-      rotator.restart();
-      ctx.announce(groups[index].map((it) => it.job.title).join('. '));
-    }
+    if (manual) ctx.announce(groups[index].map((it) => it.job.title).join('. '));
   }
 
   function togglePause() {
@@ -138,13 +146,14 @@ export function mountSlideshow(ctx, spec) {
       stateHost.hidden = true;
       slideHost.hidden = false;
       /* Same vacancies in the same order (only a badge or a date changed): redraw the screen but leave the
-         countdown and the progress bar running, so a data refresh never makes a vacancy stay up longer. */
-      render(index, false, unchanged);
+         countdown and the progress bar running, so a data refresh never makes a vacancy stay up longer.
+         Otherwise the countdown and the bar start together. */
       if (groups.length > 1) { if (!unchanged) rotator.start(cfg.rotationMs); } else rotator.stop();
+      render(index, false, unchanged);
     },
     resize() { if (view && view.status === 'ok') render(index, false, true); },
     refit() { if (current) spec.fit(current); },
-    tick(now) { if (header) header.tick(now); },
+    tick(now) { if (header) header.tick(now); syncBar(); },
     next() { go(1, true); },
     prev() { go(-1, true); },
     togglePause,
