@@ -683,15 +683,42 @@ export function createStatePanel(kind, ctx) {
   return panel;
 }
 
-/* Paging segments: one per page/slide, the current one fills over the rotation time. */
-export function buildPager(host, count, index, rotationSeconds) {
+/* Paging segments: one per page/slide. The current one fills smoothly over the rotation time and the next one starts
+   the moment the screen changes.
+   The fill is a transform (scaleX), which the browser draws at sub-pixel positions on the graphics card, so it glides
+   instead of stepping a pixel at a time. It is not left to run on its own clock: the rotator says how far through its
+   countdown it is and sync(state) puts the bar at exactly that point (and pauses / resumes it with the rotator), so the
+   bar and the screen change cannot drift apart. Returns { sync }, or null when there is nothing to page through.
+   animate=false (reduced motion): done segments are full, the current one stays empty. */
+export function buildPager(host, count, index, rotationSeconds, animate) {
   clear(host);
   host.hidden = count <= 1;
-  if (count <= 1) return;
-  host.style.setProperty('--rot', rotationSeconds + 's');
+  if (count <= 1) return null;
   for (let i = 0; i < count; i += 1) {
     const seg = el('i', i < index ? 'is-done' : (i === index ? 'is-active' : ''));
     seg.appendChild(el('b'));
     host.appendChild(seg);
   }
+  const total = Math.max(1, rotationSeconds * 1000);
+  const active = host.children[index];
+  const bar = active ? active.firstChild : null;
+  let anim = null;
+  if (animate !== false && bar && typeof bar.animate === 'function') {
+    anim = bar.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: total, easing: 'linear', fill: 'forwards' });
+  }
+  return {
+    sync(state) {
+      if (!anim || !state || !state.interval) return;
+      const target = Math.min(total, Math.max(0, state.elapsed / state.interval * total));
+      const now = anim.currentTime;
+      if (state.held) {
+        anim.pause();
+        anim.currentTime = target;
+        return;
+      }
+      /* Running: leave it alone unless it has drifted (a hidden tab, a stalled browser, a long freeze). */
+      if (now === null || Math.abs(now - target) > 120) anim.currentTime = target;
+      if (anim.playState === 'paused' && target < total) anim.play();
+    }
+  };
 }
