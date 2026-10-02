@@ -17,6 +17,14 @@ https://<your-site>/admin                       Display builder: pick the option
 It is **internal**: the aim is employee awareness of opportunities inside the group. Vacancies come only from Talos, through the existing
 `/api/jobs` function; there is no sample or hard-coded vacancy anywhere in the display.
 
+## Version 2.1.1: progress bar fix
+
+The progress bar at the bottom of the hero, duo, carousel and wall screens could finish while the screen was still waiting to change (seen after a tab or
+phone screen had been hidden), and it filled in visible steps. Now the bar is drawn **from the rotation timer itself**: it starts, pauses, resumes and
+restarts together with the countdown, so it is full at the moment the screen changes and cannot get ahead of it. The fill is a sub-pixel transform, so it glides
+instead of ticking, and each segment is up to 300 design pixels wide (it was 160), which makes the movement finer still. Changed files: `rotator.js`,
+`components.js` (`buildPager`), `slideshow.js`, `modes/wall.js`, `runtime.js`, `app.css`; 3 new unit tests.
+
 ## What changed in version 2.1 (this refinement)
 
 | | Before | Now |
@@ -328,7 +336,7 @@ independently, so two screens can briefly show different lists.
 - Talos retrieval and `jobs.js`: field mapping, link construction, HTML stripping, de-duplication, slot logic across both daylight-saving changes, cache hit / miss / stale / error behaviour with simulated failures (against the real captured API response).
 - 42 unit tests and 9 Worker tests (`node --no-warnings tests/worker.mjs`: `/api/jobs` goes to the function, every other path to the static files, other methods refused, `workers.dev` and custom-domain caching, the role overview extraction and the vacancy-page links); contrast of every colour pair in every theme (160 pairs, all above target).
 - Layout: 104 mode × screen-size × data-size combinations, 52 option variants, 150 theme × language combinations and 44 rotation combinations (350 in all) – no console errors, nothing off-screen, no text running into a card's border, titles fit. A few deliberately extreme settings (for example five columns on a portrait screen) are allowed to produce small text, as the address asked for it.
-- Version 2.1 layouts (hero, duo, carousel, wall with the new heading band and logo): a further 155-combination sweep (six screen sizes including portrait and 4K, five sets of vacancies including very long titles and overviews and none, every theme, five languages, `fontscale` 1.5, `rotate=90`) – no console errors, nothing off-screen, no clipped or overflowing text. Screenshots were reviewed by eye for every mode in landscape and portrait.
+- Version 2.1 layouts (hero, duo, carousel, wall with the new heading band and logo): a further 155-combination sweep (six screen sizes including portrait and 4K, five sets of vacancies including very long titles and overviews and none, every theme, five languages, `fontscale` 1.5, `rotate=90`) – no console errors, nothing off-screen, no clipped or overflowing text, with one known exception: a custom `?title=` of about 70 characters is shrunk to 35 % and then cut with "…" (keep a custom heading short: about 25 characters is as long as it stays large). Screenshots were reviewed by eye for every mode in landscape and portrait.
 - Rotation: the hero cycles through every vacancy (and the duo through every pair) with the 40-second default; `limit=1` and a pinned `job=` stay still.
 - QR codes: 22 of 22 rendered codes decode to exactly the vacancy link with an independent decoder (OpenCV), and the version 2.1 hero code decodes to the `/job/<id>` page address; see [docs/QR.md](docs/QR.md) for the detail.
 - States (loading, failed, empty, saved copy, bad data), keyboard operation, screen-reader structure, reduced motion, link safety.
