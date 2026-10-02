@@ -37,6 +37,7 @@ export function mount(ctx) {
   let pageIndex = 0;
   let paused = false;
   let controls = null;
+  let bar = null;                       /* the progress bar: follows the rotator's clock */
   const timers = new Set();
 
   function later(fn, ms) {
@@ -44,7 +45,14 @@ export function mount(ctx) {
     timers.add(id);
   }
 
-  const rotator = createRotator(() => go(1, false));
+  const rotator = createRotator(() => go(1, false), syncBar);
+
+  function syncBar() { if (bar) bar.sync(rotator.state()); }
+  /* Start the bar for page `index` (empty, filling) at the same moment the countdown for it starts. */
+  function startBar(index) {
+    bar = buildPager(pager, pages.length, index, cfg.rotation, !ctx.reducedMotion);
+    syncBar();
+  }
 
   if (cfg.controls) {
     controls = createControls(ctx, {
@@ -58,6 +66,7 @@ export function mount(ctx) {
   function showState(kind) {
     rotator.stop();
     pages = [];
+    bar = null;
     clear(pageEl);
     clear(stateHost);
     pager.hidden = true;
@@ -83,11 +92,12 @@ export function mount(ctx) {
       pageEl.appendChild(row);
     }
     fitCards(nodes);
-    buildPager(pager, pages.length, index, cfg.rotation);
   }
 
+  /* The progress bar moves on at once (the old bar is full at that moment); the page itself fades over 0.4 s. */
   function renderPage(index, animate) {
     if (!pages[index]) return;
+    startBar(index);
     if (animate && !ctx.reducedMotion) {
       pageEl.classList.add('is-out');
       later(() => { build(index); pageEl.classList.remove('is-out'); }, 380);
@@ -112,18 +122,18 @@ export function mount(ctx) {
     pageEl.style.setProperty('--gap', gap + 'px');
     pages = sliceIntoPages(view.items, layout.sizes);
     if (!keepPage || pageIndex >= pages.length) pageIndex = 0;
-    renderPage(pageIndex, false);
-    if (pages.length > 1) rotator.start(cfg.rotationMs);
+    if (pages.length > 1) rotator.start(cfg.rotationMs);     /* the countdown and the bar start together */
     else rotator.stop();
+    renderPage(pageIndex, false);
     ctx.announceable = pages.length;
   }
 
   function go(delta, manual) {
     if (pages.length < 2) return;
     pageIndex = (pageIndex + delta + pages.length) % pages.length;
+    if (manual) rotator.restart();      /* a full countdown from now, before the bar is started */
     renderPage(pageIndex, true);
     if (manual) {
-      rotator.restart();
       ctx.announce(ctx.i18n.t('pageOf', { page: pageIndex + 1, pages: pages.length }));
     }
   }
@@ -145,7 +155,7 @@ export function mount(ctx) {
     },
     resize() { if (view && view.status === 'ok') relayout(true); },
     refit() { if (view && view.status === 'ok') fitCards(Array.prototype.slice.call(pageEl.querySelectorAll('.card'))); },
-    tick(now) { if (header) header.tick(now); },
+    tick(now) { if (header) header.tick(now); syncBar(); },
     next() { go(1, true); },
     prev() { go(-1, true); },
     togglePause,
