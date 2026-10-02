@@ -3,8 +3,9 @@
    (set on <html data-theme="..."> by early.js / main.js).
 
    Cooneen palette (from the Cooneen Group website and the apps.cooneen.com staff portal):
-     orange #E87722   blue #14456E   charcoal #1A1A1A   warm greys   red #DC2626 for urgency
-   The default theme is charcoal with the orange heading band; the heading band is always the Cooneen colour.
+     orange #E87722   blue #14456E   charcoal #1A1A1A   greys   red for urgency
+   Colour balance of the default theme: graphite / charcoal surfaces carry the screen, off-white carries the text, and Cooneen
+   orange is the accent (the line under the heading band, icons, the top edge of each vacancy, the progress bar, Featured).
 
    Tokens
      bg-1 bg-2        stage background gradient           twill   faint diagonal cloth texture
@@ -25,20 +26,20 @@
 
 :root,
 :root[data-theme="cooneen"] {
-  --bg-1: #1a1a1a; --bg-2: #2b2926; --twill: rgba(255, 255, 255, 0.035);
-  --on-bg: #ffffff; --on-bg-2: #d9d4cd; --rule: rgba(255, 255, 255, 0.34); --seg-bg: rgba(255, 255, 255, 0.18);
-  --panel: #333030;
-  --accent: #f08a35; --accent-ink: #b5560a; --on-accent: #1a1a1a;
+  --bg-1: #202123; --bg-2: #2b2c2e; --twill: rgba(255, 255, 255, 0.022);
+  --on-bg: #f4f2ef; --on-bg-2: #cbcccf; --rule: rgba(255, 255, 255, 0.16); --seg-bg: rgba(255, 255, 255, 0.16);
+  --panel: #363739;
+  --accent: #f08a35; --accent-ink: #f08a35; --on-accent: #1a1a1a;
   --gold: #e87722; --on-gold: #1a1a1a;
-  --warn: #dc2626; --on-warn: #ffffff; --warn-ink: #b91c1c; --warn-text: #ff8f84;
-  --new: #6db4ee; --on-new: #0b2a47;
-  --surface: #ffffff; --ink: #1a1a1a; --ink-2: #4f4b46; --line: rgba(26, 26, 26, 0.3); --stitch: rgba(232, 119, 34, 0.85);
-  --shadow: 0 calc(var(--d, 1px) * 10) calc(var(--d, 1px) * 30) rgba(0, 0, 0, 0.45);
-  --hdr-bg: #e87722; --hdr-ink: #1a1a1a; --hdr-edge: #b85a0c;
-  --plate-dark: #1a1a1a; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
-  --qr-edge: #e87722;
-  --card-border-w: 0; --focus: #ffd27a; --focus-s: #14456e;
-  --ticker-bg: #111111; --ticker-ink: #ffffff; --ticker-label-bg: #e87722; --ticker-label-ink: #1a1a1a; --ticker-line: #e87722; --ticker-warn: #ffb36b;
+  --warn: #c0352f; --on-warn: #ffffff; --warn-ink: #ff9a90; --warn-text: #ff9a90;
+  --new: #2b6fae; --on-new: #ffffff;
+  --surface: #363739; --ink: #f4f2ef; --ink-2: #cbcccf; --line: rgba(255, 255, 255, 0.16); --stitch: rgba(255, 255, 255, 0.14);
+  --shadow: inset 0 0 0 calc(var(--d, 1px) * 1.5) rgba(255, 255, 255, 0.07), 0 calc(var(--d, 1px) * 8) calc(var(--d, 1px) * 26) rgba(0, 0, 0, 0.38);
+  --hdr-bg: #333436; --hdr-ink: #f4f2ef; --hdr-edge: #e87722;
+  --plate-dark: #333436; --plate-dark-ink: #f4f2ef; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
+  --qr-edge: #f4f2ef;
+  --card-border-w: 0; --focus: #ffd27a; --focus-s: #ffd27a;
+  --ticker-bg: #1c1d1f; --ticker-ink: #f4f2ef; --ticker-label-bg: #333436; --ticker-label-ink: #f4f2ef; --ticker-line: #e87722; --ticker-warn: #ffb36b;
 }
 
 /* All dark: a near-black screen with a dark heading band and orange lettering. */
@@ -52,9 +53,9 @@
   --new: #6db4ee; --on-new: #0b2a47;
   --surface: #262423; --ink: #f5f3f0; --ink-2: #c5bfb7; --line: rgba(255, 255, 255, 0.24); --stitch: rgba(245, 143, 62, 0.6);
   --shadow: 0 calc(var(--d, 1px) * 10) calc(var(--d, 1px) * 30) rgba(0, 0, 0, 0.55);
-  --hdr-bg: #000000; --hdr-ink: #f58f3e; --hdr-edge: #e87722;
+  --hdr-bg: #000000; --hdr-ink: #f5f3f0; --hdr-edge: #e87722;
   --plate-dark: #1f1e1d; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
-  --qr-edge: #f58f3e;
+  --qr-edge: #f5f3f0;
   --card-border-w: 0; --focus: #ffd27a; --focus-s: #ffd27a;
   --ticker-bg: #000000; --ticker-ink: #f5f3f0; --ticker-label-bg: #f58f3e; --ticker-label-ink: #1a1a1a; --ticker-line: #f58f3e; --ticker-warn: #ff8f84;
 }
@@ -70,9 +71,9 @@
   --new: #14456e; --on-new: #ffffff;
   --surface: #ffffff; --ink: #1a1a1a; --ink-2: #4a463f; --line: rgba(26, 26, 26, 0.25); --stitch: rgba(232, 119, 34, 0.8);
   --shadow: 0 calc(var(--d, 1px) * 8) calc(var(--d, 1px) * 24) rgba(26, 26, 26, 0.16);
-  --hdr-bg: #e87722; --hdr-ink: #1a1a1a; --hdr-edge: #b85a0c;
-  --plate-dark: #1a1a1a; --plate-dark-ink: #ffffff; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
-  --qr-edge: #b85a0c;
+  --hdr-bg: #333436; --hdr-ink: #f4f2ef; --hdr-edge: #e87722;
+  --plate-dark: #333436; --plate-dark-ink: #f4f2ef; --plate-light: #ffffff; --plate-light-ink: #1a1a1a;
+  --qr-edge: #333436;
   --card-border-w: 0; --focus: #14456e; --focus-s: #14456e;
   --ticker-bg: #ffffff; --ticker-ink: #1a1a1a; --ticker-label-bg: #e87722; --ticker-label-ink: #1a1a1a; --ticker-line: #e87722; --ticker-warn: #b91c1c;
 }
