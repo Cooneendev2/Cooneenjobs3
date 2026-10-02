@@ -114,6 +114,8 @@ export function createRuntime(o) {
   }
 
   function heartbeat() {
+    /* A missed visibilitychange (some phone and signage browsers drop them) must not leave the rotation frozen. */
+    if (hidden !== document.hidden) onVisibility();
     /* A failing redraw must not stop the nightly reload from being checked; it is re-thrown on its own so the
        error watchdog above counts it (5 in 10 minutes -> one reload). */
     try { o.onHeartbeat(); } catch (err) { window.setTimeout(() => { throw err; }, 0); }
