@@ -238,20 +238,24 @@ export function fitCards(nodes) {
 /* ------------------------------------------------------------------ */
 /* Role description (the vacancy's opening overview)                   */
 /* ------------------------------------------------------------------ */
-/* One paragraph element (blank lines kept) so it can be cut cleanly with "..." if it ever has to be. The overview is the
-   opening of the vacancy page itself; the short search-results summary is only the fallback when there is none. */
+/* One paragraph element so it can be cut cleanly with "..." if it ever has to be. The text is the FIRST paragraph of the
+   vacancy page's opening (the part before the first line break / blank line); the short search-results summary is only
+   the fallback when there is no overview. */
 export function createDescription(item, ctx, cls) {
   if (!ctx.cfg.showSummary) return null;
-  const text = item.job.overview || item.job.summary;
+  const overview = item.job.overview ? String(item.job.overview).split(/\n\s*\n/)[0].trim() : '';
+  const text = overview || item.job.summary;
   if (!text) return null;
   const box = el('div', cls);
   box.appendChild(el('p', cls + '-text', text));
   return box;
 }
 
-/* Shrink the text of `box` (in steps) until it fits the room it was given; if it still does not fit at the smallest
+/* Size the text of `box` to the room it was given. By default it is only ever shrunk (in steps) until it fits. With
+   `maxFactor` (> 1) it is also allowed to GROW: the largest size up to maxFactor at which the text still fits the box,
+   so a short description fills its box instead of leaving it half empty. If it still does not fit at the smallest
    size, show as many whole lines as fit, ending in "...". `root` carries the CSS variable `prop` (1 = full size). */
-export function fitText(root, box, prop, minFactor, forced) {
+export function fitText(root, box, prop, minFactor, forced, maxFactor) {
   const text = box.firstChild;
   root.style.removeProperty(prop);
   box.style.removeProperty('--lines');
@@ -259,7 +263,21 @@ export function fitText(root, box, prop, minFactor, forced) {
   const over = () => box.scrollHeight > box.clientHeight + 1;
   let factor = 1;
   if (forced !== undefined) { factor = forced; root.style.setProperty(prop, factor.toFixed(3)); }
-  else {
+  else if (maxFactor > 1) {
+    let lo = minFactor;
+    let hi = maxFactor;
+    root.style.setProperty(prop, hi.toFixed(3));
+    if (!over()) factor = hi;
+    else {
+      for (let i = 0; i < 9; i++) {              // binary search: the largest size that fits
+        const mid = (lo + hi) / 2;
+        root.style.setProperty(prop, mid.toFixed(3));
+        if (over()) hi = mid; else lo = mid;
+      }
+      factor = lo;
+      root.style.setProperty(prop, factor.toFixed(3));
+    }
+  } else {
     let guard = 0;
     while (guard < 30 && factor > minFactor && over()) {
       factor *= 0.95;
@@ -429,6 +447,7 @@ export function createDuoPanel(item, ctx) {
 /* Both panels of a screen get the same text sizes, so the two vacancies look like a pair: the smallest title and
    description size either panel needs is used for both. If a panel is still too full (a very large ?fontscale= with
    very long vacancies), the QR codes shrink - down to the smallest size that still scans - then the facts, then the titles. */
+const DUO_DESC_MAX = 1.5;   // the description may grow to at most 1.5 x its normal size to fill its box
 export function fitDuo(panels) {
   panels.forEach((p) => {
     p.root.style.removeProperty('--ft');
@@ -452,9 +471,8 @@ export function fitDuo(panels) {
   const apply = () => panels.forEach((p) => p.root.style.setProperty('--ft', tf.toFixed(3)));
   const fitDescriptions = () => {
     const withDesc = panels.filter((p) => p.desc);
-    const factors = withDesc.map((p) => fitText(p.root, p.desc, '--fo', 0.55));
-    const common = Math.min.apply(null, factors);
-    withDesc.forEach((p) => fitText(p.root, p.desc, '--fo', 0.55, common));
+    /* each description is sized to fill its own box (a short one grows, a long one shrinks) */
+    withDesc.forEach((p) => fitText(p.root, p.desc, '--fo', 0.55, undefined, DUO_DESC_MAX));
   };
   /* "Too full": a panel overflows, or its description has been squeezed to less than two lines of text. */
   const starved = (p) => {
