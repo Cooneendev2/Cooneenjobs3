@@ -448,42 +448,21 @@ export function createDuoPanel(item, ctx) {
    description size either panel needs is used for both. If a panel is still too full (a very large ?fontscale= with
    very long vacancies), the QR codes shrink - down to the smallest size that still scans - then the facts, then the titles. */
 const DUO_DESC_MAX = 1.5;   // the description may grow to at most 1.5 x its normal size to fill its box
-const DUO_TITLE_MIN = 0.45; // a job title stays on ONE line, shrunk to no less than this fraction of its full size
+const DUO_TITLE_MIN = 0.25; // the job title is ALWAYS one line: shrunk to fit, down to this fraction of its full size
 export function fitDuo(panels) {
   panels.forEach((p) => {
     p.root.style.removeProperty('--ft');
     p.root.style.removeProperty('--fq');
     p.root.style.removeProperty('--ff');
-    p.root.classList.remove('is-title-wrap');
-    p.wrap.style.minHeight = '';
     if (p.qr) p.qr.hidden = false;
     p.wrap.style.maxHeight = Math.floor(p.root.clientHeight * 0.3) + 'px';
   });
-  /* The title is kept on one line (CSS: no wrapping) and shrunk until it fits the width; the SAME size is used in both
-     panels, so the two titles are one line each and everything under them lines up. Only a title that would need to be
-     smaller than DUO_TITLE_MIN is allowed to wrap onto a second line (and then both titles still share one size). */
-  const oneLineFactor = (p) => Math.min(1, (p.wrap.clientWidth - 1) / Math.max(1, p.title.scrollWidth));
-  const wrapFactor = (p) => {
-    let factor = 1;
-    let guard = 0;
-    while (guard < 24 && factor > 0.3 &&
-      (p.title.offsetHeight > p.wrap.clientHeight + 1 || p.title.scrollWidth > p.wrap.clientWidth + 1)) {
-      factor *= 0.93;
-      p.root.style.setProperty('--ft', factor.toFixed(3));
-      guard += 1;
-    }
-    return factor;
-  };
-  let tf = Math.min.apply(null, panels.map(oneLineFactor));
-  if (tf < DUO_TITLE_MIN) {
-    panels.forEach((p) => p.root.classList.add('is-title-wrap'));
-    tf = Math.min.apply(null, panels.map(wrapFactor));
-  }
-  const apply = () => {
-    panels.forEach((p) => { p.root.style.setProperty('--ft', tf.toFixed(3)); p.wrap.style.minHeight = ''; });
-    const tall = Math.max.apply(null, panels.map((p) => p.wrap.offsetHeight));   // equal title blocks keep the facts level
-    panels.forEach((p) => { p.wrap.style.minHeight = tall + 'px'; });
-  };
+  /* The title never wraps (CSS: one line) - it is shrunk until it fits the width beside the QR code. Both panels use the
+     SAME (smaller) size, so the two titles are the same height and everything under them lines up. Only a title that
+     would have to be smaller than DUO_TITLE_MIN is cut with "..." (the full title is still in the screen-reader list). */
+  const oneLineFactor = (p) => (p.wrap.clientWidth > 1 ? Math.min(1, (p.wrap.clientWidth - 1) / Math.max(1, p.title.scrollWidth)) : 1);
+  let tf = Math.max(DUO_TITLE_MIN, Math.min.apply(null, panels.map(oneLineFactor)));
+  const apply = () => panels.forEach((p) => p.root.style.setProperty('--ft', tf.toFixed(3)));
   const fitDescriptions = () => {
     const withDesc = panels.filter((p) => p.desc);
     /* each description is sized to fill its own box (a short one grows, a long one shrinks) */
