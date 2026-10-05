@@ -355,7 +355,7 @@ a.feature:focus-visible { outline: calc(var(--d) * 6) solid var(--focus); outlin
 .panel .qr { --qr: calc(var(--d) * var(--fs) * var(--fq, 1) * 200); color: var(--on-bg); }
 .panel .qr figcaption { max-width: calc(var(--qr) * 1.2); font-size: calc(var(--qr) * 0.095); }
 .panel-desc {
-  flex: 0 1 auto; min-height: 0; overflow: hidden; margin-top: calc(var(--d) * 24); padding-top: calc(var(--d) * 24);
+  flex: 1 1 0; min-height: 0; overflow: hidden; margin-top: calc(var(--d) * 24); padding-top: calc(var(--d) * 24);
   border-top: calc(var(--d) * 3) dashed var(--rule); font-size: calc(var(--d) * var(--fs) * var(--fo, 1) * 31);
 }
 .panel-desc-text { margin: 0; font-weight: 600; line-height: 1.36; white-space: pre-line; color: var(--on-bg-2); }
