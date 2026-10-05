@@ -346,11 +346,10 @@ a.feature:focus-visible { outline: calc(var(--d) * 6) solid var(--focus); outlin
 .panel .badges { margin-bottom: calc(var(--d) * var(--fs) * 14); font-size: calc(var(--d) * var(--fs) * 22); }
 .panel .badge { font-size: calc(var(--d) * var(--fs) * 24); }
 .panel-titlewrap { flex: none; overflow: hidden; }
-.panel-title {                 /* one line: the script shrinks it to fit the width (the same size in both panels) */
-  margin: 0; font-weight: 800; line-height: 1.05; letter-spacing: -0.015em; white-space: nowrap;
+.panel-title {                 /* always one line: the script shrinks it to fit the width (the same size in both panels) */
+  margin: 0; font-weight: 800; line-height: 1.05; letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   font-size: calc(var(--d) * var(--fs) * var(--ft, 1) * var(--ft-base));
 }
-.panel.is-title-wrap .panel-title { white-space: normal; overflow-wrap: anywhere; hyphens: auto; }   /* only a very long title wraps */
 .panel .facts { margin-top: calc(var(--d) * 18); font-size: calc(var(--d) * var(--fs) * var(--ff, 1) * 29); row-gap: 0.2em; }
 .panel .fact .ico { color: var(--accent); }
 .panel .qr { --qr: calc(var(--d) * var(--fs) * var(--fq, 1) * 200); color: var(--on-bg); }
